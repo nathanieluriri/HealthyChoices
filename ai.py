@@ -12,7 +12,7 @@ import google.generativeai as genai
 #   "max_output_tokens": 2048,
 # }
 # Set up the model
-genai.configure(api_key="AIzaSyAKNV7BoByxdTHHG3OewIFSBDQhqMK6USs")
+genai.configure(api_key="AIzaSyBBTsAplxkTkHYofKyTp_1qfqOw55hoK9I")
 
 
 
@@ -29,10 +29,10 @@ genai.configure(api_key="AIzaSyAKNV7BoByxdTHHG3OewIFSBDQhqMK6USs")
 #     print(model)
 
 
-embedings = genai.generate_embeddings(
-    model="models/embedding-gecko-001",
-    text="hello everyone how are you doing "
-)
+# embedings = genai.generate_embeddings(
+#     model="models/embedding-gecko-001",
+#     text="hello everyone how are you doing "
+# )
 
 # print(embedings['embedding'])
 
@@ -494,19 +494,34 @@ Available_options=[
 ''']
 
 
-prompt_parts = [
-  f'''SYSTEM PROMPT:You recommend one Name of food based on user's requirement, users choice and available healthy options chose from one of the healthy options give detailed cooking instruction for selected dish [Include the  food ID from the food selected from the available options OUTPUT SHOULD LOOK LIKE THE ASSISTANT RESPONSE EXAMPLE],
-     USER'S REQUIREMENT: above 15000cal ,male,needs more energy, can eat veg and non-veg foods,
-     USER'S CHOICE: I want Eba and Egusi soup,
-     AVAILABLE HEALTHY OPTIONS:
+def recommend_food(food):
+  import random
+  prompt_parts = [
+    f'''SYSTEM PROMPT:You recommend one Name of food based on user's requirement, users choice and available  options chose from one of the options give detailed cooking instruction for selected dish [Include the  food ID from the food selected from the available options OUTPUT SHOULD LOOK LIKE THE ASSISTANT RESPONSE EXAMPLE] if the available options don't meet the user's requirements and isn't similar to user's choice respond with !<NONE>?;
+        FURTHER SYSTEM INSTRUCTIONS: Make sure your response can be converted from a string to a python list data type;
+      USER'S REQUIREMENT: below 15000cal ,female,User requires more protein;
+      USER'S CHOICE: {food} ;
+      AVAILABLE OPTIONS:
 
-Food_ID,        Name_of_Food,         C_Type,     Veg_Type,         Description:
-{Available_options[6]}
-ASSISTANT RESPONSE EXAMPLE: [Food number(FOOD ID), Food (FOOD NAME), Ingredients ...., cooking instructions ...]
-'''
-]
-response = genai.generate_text(prompt=prompt_parts[0],max_output_tokens=2024,temperature=1)
-print(response.candidates[0]["output"])
+  Food_ID,        Name_of_Food,         C_Type,     Veg_Type,         Description:
+  {Available_options[random.randint(0,21)]};
+  ASSISTANT RESPONSE EXAMPLE:  Food number(FOOD ID), 'Food (FOOD NAME)', 'Ingredients ....', 'cooking instructions ...';
+
+  '''
+  ]
+
+  response = genai.generate_text(prompt=prompt_parts[0],max_output_tokens=2024,temperature=1)
+  import pickle
+  pickle.dump(response.candidates[0]["output"],open("response.pkl","wb"))
+  return response.candidates[0]["output"]
+
+
+# import pickle
+
+# pickle.dump(response.candidates[0]["output"],open("response.pkl","wb"))
+
+
+
 
 
 # prompt_check = [
@@ -523,3 +538,5 @@ print(response.candidates[0]["output"])
 # print(response.candidates[0]["output"])
 
 # print(Available_options[4])
+
+

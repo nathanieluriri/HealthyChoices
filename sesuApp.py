@@ -65,3 +65,6 @@ for i in range(len(suggestion)):
 
 
 
+
+
+books = pd.read_csv("sesu/data.csv",  names=['isbn13', 'isbn10', 'title','subtitle','authors','categories','thumbnail','description','published_year','average_rating','num_pages','ratings_count'])
